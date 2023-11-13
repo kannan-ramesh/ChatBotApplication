@@ -1,0 +1,13 @@
+{
+  "0":{"0": ["1.English","2.தமிழ்","3.Hindi","4.Telugu","0-Exit"]},
+  "1": {
+    "1": ["1.Fresh Juice","2.Food Menu","3.Fast Food","4.New Offers","9-Back","0.Exit"],
+    "2": ["1.பழச்சாறுகள்","2.கிராமத்து உணவு","3.துரித உணவு","4.சலுகை","9-திரும்பிச் செல்","0-வெளியேறு"]
+  },
+  "2": {
+    "1": ["1.Beet","2.Apple","3.Orange","9.Back","0.Exit"],
+    "2": ["1.white Rice","2.Chicken Briyani","3.Maton Briyani","4.Fish","9.Back","0-Exit"],
+    "3": ["1.Fries","2.Pizza","3.Rolls","9.Back","0.Exit"],
+    "4": ["1.Two Briyani order ,one Briyani free","2.Pizza + Beet juice free","3.free delivary in Up Rs.200","9.Back","0.Exit"]
+  }
+}
