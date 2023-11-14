@@ -3,9 +3,12 @@ package com.kannanrameshrk;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.Stack;
-import java.util.Map;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 
 public class Restaurant {
 	private Stack<SelectedOptions> backStack = new Stack<>();
@@ -53,58 +56,45 @@ public class Restaurant {
 	}
 	
 	private ArrayList<String> getChoices(int step, int choice) {
-	    ArrayList<String> choiceList = new ArrayList<>();
+        ArrayList<String> choiceList = new ArrayList<>();
 
-	    try (InputStream inputStream = getClass().getResourceAsStream("item.json");
-	            Scanner scanner = new Scanner(inputStream, "UTF-8")) {
+        try (InputStream inputStream = getClass().getResourceAsStream("item.json");
+             Scanner scanner = new Scanner(inputStream, "UTF-8")) {
 
-	           StringBuilder jsonContentBuilder = new StringBuilder();
-	           while (scanner.hasNextLine()) {
-	               jsonContentBuilder.append(scanner.nextLine());
-	           }
+            @SuppressWarnings("resource")
+			String jsonContent = new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
+            
+            JSONParser parser = new JSONParser();
+            JSONObject choicesObject = (JSONObject) parser.parse(jsonContent);
 
-	           String jsonContent = jsonContentBuilder.toString();
-	          
+            if (choicesObject.containsKey(String.valueOf(step))) {
+                JSONObject levelObject = (JSONObject) choicesObject.get(String.valueOf(step));
 
-	           org.json.simple.parser.JSONParser parser = new org.json.simple.parser.JSONParser();
-	           Object obj = parser.parse(jsonContent);
-	           org.json.simple.JSONObject choicesObject = (org.json.simple.JSONObject) obj;
+                if (levelObject.containsKey(String.valueOf(choice))) {
+                    Object optionsObject = levelObject.get(String.valueOf(choice));
+                   // System.out.println("Step: " + step + ", Choice: " + choice);
+                   // System.out.println("Options Object: " + optionsObject);
+                    if (optionsObject instanceof JSONArray) {
+                        choiceList.addAll((JSONArray) optionsObject);
+                    } else if (optionsObject instanceof JSONObject) {
+                        choiceList.addAll(((JSONObject) optionsObject).values());
+                    }
+                }
+            }
 
+        } catch (Exception e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
 
-	        if (choicesObject.get(String.valueOf(step)) instanceof org.json.simple.JSONObject) {
-	            org.json.simple.JSONObject levelObject = (org.json.simple.JSONObject) choicesObject.get(String.valueOf(step));
+        if (step == 3) {
+            System.out.println("Your Option set Successfully");
+            System.out.println("9-Back");
+            System.out.println("0-Exit");
+        }
 
-	            if (levelObject.get(String.valueOf(choice)) != null) {
-	                Object optionsObject = levelObject.get(String.valueOf(choice));
-
-	                if (optionsObject instanceof org.json.simple.JSONArray) {
-	                    org.json.simple.JSONArray optionsArray = (org.json.simple.JSONArray) optionsObject;
-	                    for (Object option : optionsArray) {
-	                        choiceList.add((String) option);
-	                    }
-	                } else if (optionsObject instanceof org.json.simple.JSONObject) {
-	                    org.json.simple.JSONObject optionsObjectJson = (org.json.simple.JSONObject) optionsObject;
-	                    @SuppressWarnings({ "rawtypes", "unchecked" })
-						Set<Map.Entry> entrySet = optionsObjectJson.entrySet();
-	                    for (@SuppressWarnings("rawtypes") Map.Entry entry : entrySet) {
-	                        choiceList.add((String) entry.getValue());
-	                    }
-	                }
-	            }
-	        }
-
-	    } catch (Exception e) {
-	    	System.out.println(e);
-	        e.printStackTrace();
-	    }
-	    if (step == 3) {
-			System.out.println("Your Option set Sucessfully");
-			System.out.println("9-Back");
-			System.out.println("0-Exit");
-		}
-	    
-	    return choiceList;
-	}
+        return choiceList;
+    }
 
 
 }
